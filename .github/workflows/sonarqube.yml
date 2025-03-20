@@ -1,0 +1,38 @@
+name: SonarQube pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sonarcloud-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Run SonarQube Analysis
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.sources=.
+
+      - name: Verify SonarQube Analysis Results
+        run: |
+          if grep -q "EXECUTION FAILURE" .scannerwork/report-task.txt; then
+            echo "❌ SonarQube analysis failed!"
+            exit 1
+          else
+            echo "✅ SonarQube analysis completed successfully!"
+          fi
