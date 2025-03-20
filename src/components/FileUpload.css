@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
+  
+  .drop-zone {
+    width: 400px;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    text-align: center;
+    background-color: white;
+    cursor: pointer;
+  }
+  
+  .drop-zone:hover {
+    border-color: #007bff;
+  }
+  
+  .file-label {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .file-info {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+  }
+  
