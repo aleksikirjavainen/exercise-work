@@ -18,10 +18,16 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Prepare report directories
+        run: |
+          mkdir -p odc-reports/server
+          mkdir -p odc-reports/ui
+          chmod -R 777 odc-reports
+
       - name: Install dependencies
         run: |
-          cd server && npm install
-          cd ../ui && npm install
+          npm install --prefix ui
+          npm install --prefix server
 
       - name: Run Dependency Check (server)
         run: |
@@ -38,7 +44,7 @@ jobs:
       - name: Run Dependency Check (ui)
         run: |
           docker run --rm \
-            -v "$(pwd)/client:/src" \
+            -v "$(pwd)/ui:/src" \
             -v "$(pwd)/odc-reports:/report" \
             owasp/dependency-check \
             --project "File management app - UI" \
