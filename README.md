@@ -1,46 +1,61 @@
-# Getting Started with Create React App
+# 🔐 Secure File Sharing App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a secure file-sharing web application built with **React**, **Node.js**, and **TypeScript**, following secure programming practices based on the **OWASP Top 10** guidelines.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## ✅ Security Features Implemented
 
-### `npm start`
+### 🔒 User Authentication
+- **Secure Registration & Login**
+- Passwords are **hashed with bcrypt**
+- **JWTs** are used for session management
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 🛡️ Protected Routes
+- Frontend routes like `/dashboard` are secured using a `PrivateRoute` component
+- Backend verifies JWT tokens on endpoints like `/api/me`
+- **Logout functionality** clears session data and redirects safely
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🧪 Dependency Vulnerability Scanning (**OWASP A06**)
+- **OWASP Dependency-Check** integrated into CI/CD using GitHub Actions
+- Runs on **every push and pull request**
+- Scans both `client/` and `server/` for vulnerable packages
+- Uses an **NVD API Key** to speed up CVE database downloads
+- Uploads results as **HTML reports** for download and review
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🧹 Static Code Analysis (SonarQube)
+- **SonarCloud** integration via GitHub Actions
+- Runs on **every push and pull request**
+- Detects **security hotspots**, **code smells**, and **potential bugs**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🔐 Broken Access Control (**OWASP A01**)
+- Authenticated users are the only ones who can access protected resources
+- Server-side checks ensure token validity before allowing access
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### ⚙️ Security Misconfiguration (**OWASP A05**)
+- **CORS** is configured to allow access only from `http://localhost:3000` during development
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 🛠️ Technologies Used
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+| Area      | Tech Stack                       |
+|-----------|----------------------------------|
+| Frontend  | React + TypeScript               |
+| Backend   | Node.js + Express                |
+| Auth      | JWT + bcrypt                     |
+| CI/CD     | GitHub Actions                   |
+| Security  | OWASP Dependency-Check, SonarCloud |
+| Styling   | Basic CSS                        |
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
