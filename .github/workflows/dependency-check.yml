@@ -1,0 +1,54 @@
+name: OWASP Dependency Check pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    name: Run OWASP Dependency-Check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd server && npm install
+          cd ../ui && npm install
+
+      - name: Run Dependency Check (server)
+        run: |
+          docker run --rm \
+            -v "$(pwd)/server:/src" \
+            -v "$(pwd)/odc-reports:/report" \
+            owasp/dependency-check \
+            --project "File management app - Server" \
+            --scan /src \
+            --format "HTML" \
+            --out /report/server \
+            --nvdApiKey "${{ secrets.NVD_API_KEY }}"
+
+      - name: Run Dependency Check (ui)
+        run: |
+          docker run --rm \
+            -v "$(pwd)/client:/src" \
+            -v "$(pwd)/odc-reports:/report" \
+            owasp/dependency-check \
+            --project "File management app - UI" \
+            --scan /src \
+            --format "HTML" \
+            --out /report/ui \
+            --nvdApiKey "${{ secrets.NVD_API_KEY }}"
+
+      - name: Upload reports as artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: dependency-check-reports
+          path: ./odc-reports
