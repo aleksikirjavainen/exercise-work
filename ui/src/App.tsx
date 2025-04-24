@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import AuthPage from "./components/Auth";
+import AuthPage from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Files from "./pages/Files";

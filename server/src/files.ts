@@ -1,27 +1,9 @@
 import express, { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import jwt from "jsonwebtoken";
+import { authenticate } from "./functions";
 
 const router = express.Router();
-const JWT_SECRET = "supersecret";
-
-function authenticate(req: Request, res: Response, next: () => void): void {
-  const token = req.cookies?.token;
-
-  if (!token) {
-    res.status(401).json({ message: "No token provided" });
-    return;
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
-    (req as any).user = decoded;
-    next();
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
-  }
-}
 
 router.get("/files", authenticate, (req: Request, res: Response) => {
   const uploadsPath = path.join(__dirname, "../uploads");

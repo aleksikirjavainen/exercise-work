@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const router = Router();
 const users: { email: string; passwordHash: string }[] = [];
 
-const JWT_SECRET = "supersecret";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 router.post("/register", async (req: Request, res: Response): Promise<any> => {
   const { email, password } = req.body;

@@ -8,7 +8,7 @@ const Dashboard = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      await fetch("http://localhost:5000/api/logout", {
+      await fetch("/api/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -54,9 +54,6 @@ const Dashboard = () => {
       <p>Logged in as: <strong>{email}</strong></p>
       <button onClick={navigateToFiles} style={{ marginTop: "1rem" }}>
         Files
-      </button>
-      <button onClick={handleLogout} style={{ marginTop: "1rem", marginLeft: "1rem" }}>
-        Logout
       </button>
     </div>
   );
