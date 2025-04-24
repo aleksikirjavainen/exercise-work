@@ -4,18 +4,20 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-const JWT_SECRET = "supersecret"; // replace with env var in production
+const JWT_SECRET = "supersecret";
 
-// Multer disk storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // save to server/uploads/
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+    const userEmail = (req as any).user.email;
+    const prefix = userEmail.replace(/[@.]/g, "-");
+    const unique = Date.now() + "-" + file.originalname;
+    cb(null, `${prefix}-${unique}`);
   },
-}); // ✅ continue
+});
+
 
 const upload = multer({
   storage: storage,
@@ -24,24 +26,22 @@ const upload = multer({
 
 
 function authenticate(req: Request, res: Response, next: () => void): void {
-    const auth = req.headers.authorization;
-  
-    if (!auth?.startsWith("Bearer ")) {
-      res.status(401).json({ message: "No token provided" });
-      return;
-    }
-  
-    const token = auth.split(" ")[1];
-    try {
-      const user = jwt.verify(token, JWT_SECRET) as { email: string };
-      (req as any).user = user;
-      next();
-    } catch {
-      res.status(401).json({ message: "Invalid token" });
-    }
+  const token = req.cookies?.token;
+
+  if (!token) {
+    res.status(401).json({ message: "No token provided" });
+    return;
   }
 
-// POST /api/upload
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
+    (req as any).user = decoded;
+    next();
+  } catch {
+    res.status(401).json({ message: "Invalid token" });
+  }
+}
+
 router.post("/upload", authenticate, upload.single("file"), (req: Request, res: Response) => {
     if (!req.file) {
       res.status(400).json({ message: "No file uploaded" });

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import BackButton from "../../components/BackButton";
 
 const FileUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
@@ -12,15 +13,11 @@ const FileUpload = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const token = localStorage.getItem("token");
-
     try {
-      const response = await fetch("http://localhost:5000/api/upload", {
+      const response = await fetch("/api/upload", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token || ""}`,
-        },
         body: formData,
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -39,6 +36,7 @@ const FileUpload = () => {
 
   return (
     <div style={{ padding: "2rem" }}>
+      <BackButton to="/files" />
       <h2>Upload File</h2>
       <div
         {...getRootProps()}

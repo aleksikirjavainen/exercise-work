@@ -6,29 +6,28 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetch("http://localhost:5000/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
     navigate("/auth");
   }, [navigate]);
 
   const navigateToFiles = () => {
-    navigate("/files")
-  }
+    navigate("/files");
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        handleLogout();
-        return;
-      }
-
       try {
         const response = await fetch("/api/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          method: "GET",
+          credentials: "include",
         });
 
         const data = await response.json();
@@ -54,9 +53,9 @@ const Dashboard = () => {
       <h2>Welcome to your dashboard</h2>
       <p>Logged in as: <strong>{email}</strong></p>
       <button onClick={navigateToFiles} style={{ marginTop: "1rem" }}>
-      Files
+        Files
       </button>
-      <button onClick={handleLogout} style={{ marginTop: "1rem" }}>
+      <button onClick={handleLogout} style={{ marginTop: "1rem", marginLeft: "1rem" }}>
         Logout
       </button>
     </div>

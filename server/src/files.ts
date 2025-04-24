@@ -6,16 +6,16 @@ import jwt from "jsonwebtoken";
 const router = express.Router();
 const JWT_SECRET = "supersecret";
 
-// Middleware: auth
 function authenticate(req: Request, res: Response, next: () => void): void {
-  const auth = req.headers.authorization;
-  if (!auth?.startsWith("Bearer ")) {
+  const token = req.cookies?.token;
+
+  if (!token) {
     res.status(401).json({ message: "No token provided" });
     return;
   }
 
   try {
-    const decoded = jwt.verify(auth.split(" ")[1], JWT_SECRET) as { email: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
     (req as any).user = decoded;
     next();
   } catch {

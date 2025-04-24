@@ -1,12 +1,11 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +15,7 @@ const LoginForm = () => {
       const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -24,7 +24,6 @@ const LoginForm = () => {
       if (!response.ok) {
         setError(data.message || "Login failed");
       } else {
-        localStorage.setItem("token", data.token);
         navigate("/dashboard");
       }
     } catch (err) {
@@ -34,8 +33,20 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleLogin} className="auth-form">
-      <input type="email" placeholder="Email" value={email} required onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} required onChange={(e) => setPassword(e.target.value)} />
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        required
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        required
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
       {error && <p className="error-message">{error}</p>}
 

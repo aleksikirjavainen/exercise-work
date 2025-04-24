@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BackButton from "../../components/BackButton";
 
 type FileEntry = {
   filename: string;
@@ -12,12 +13,9 @@ const MyFiles = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchFiles = async () => {
-    const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/files", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await fetch("/api/files", {
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -30,16 +28,13 @@ const MyFiles = () => {
   };
 
   const deleteFile = async (filename: string) => {
-    const token = localStorage.getItem("token");
     const confirm = window.confirm(`Delete ${filename}?`);
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/files/${filename}`, {
+      const res = await fetch(`/api/files/${filename}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -57,6 +52,7 @@ const MyFiles = () => {
 
   return (
     <div style={{ padding: "2rem" }}>
+      <BackButton to="/files" />
       <h2>My Files</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {files.length === 0 ? (
