@@ -2,7 +2,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./components/Auth";
 import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
-import Files from "./components/Files";
+import Files from "./pages/Files";
+import MyFiles from "./pages/Files/MyFiles";
+import FileUpload from "./pages/Files/FileUpload";
 
 const App = () => {
   return (
@@ -17,14 +19,9 @@ const App = () => {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/files"
-        element={
-          <PrivateRoute>
-            <Files />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/files" element={<PrivateRoute><Files /></PrivateRoute>} />
+      <Route path="/files/upload" element={<PrivateRoute><FileUpload /></PrivateRoute>} />
+      <Route path="/files/my-files" element={<PrivateRoute><MyFiles /></PrivateRoute>} />
     </Routes>
   );
 };
