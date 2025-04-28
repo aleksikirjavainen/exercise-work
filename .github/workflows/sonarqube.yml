@@ -18,6 +18,20 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Install Server Dependencies
+        run: npm install --prefix server
+
+      - name: Run Tests and Generate Coverage
+        run: npm run test -- --coverage
+
       - name: Run SonarQube Analysis
         uses: sonarsource/sonarqube-scan-action@master
         with:
@@ -27,6 +41,7 @@ jobs:
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
             -Dsonar.sources=.
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
       - name: Verify SonarQube Analysis Results
         run: |

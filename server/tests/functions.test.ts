@@ -1,4 +1,4 @@
-import { authenticate, sanitizeFilename } from "../functions";
+import { authenticate, sanitizeFilename } from "../src/functions";
 import * as jwt from "jsonwebtoken";
 
 describe("functions", () => {
