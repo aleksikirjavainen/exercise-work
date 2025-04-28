@@ -1,11 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./users";
 import uploadRoutes from "./upload";
 import fileRoutes from "./files"
-import dotenv from "dotenv";
-dotenv.config();
 
 const app = express();
 app.disable("x-powered-by"); // Vulnerability found and fixed by SonarQube
