@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import { authenticate } from "./functions";
+import { authenticate, sanitizeFilename } from "./functions";
 
 const router = express.Router();
 
@@ -33,8 +33,17 @@ router.get("/files", authenticate, (req: Request, res: Response) => {
 });
 
 router.get("/download/:filename", authenticate, (req: Request, res: Response) => {
-  const file = req.params.filename;
-  const filePath = path.join(__dirname, "../uploads", file);
+  let file = req.params.filename;
+
+  file = sanitizeFilename(file);
+
+  const uploadsDir = path.resolve(__dirname, "../uploads");
+  const filePath = path.join(uploadsDir, file);
+
+  if (!filePath.startsWith(uploadsDir)) {
+    res.status(400).json({ message: "Invalid file path" });
+    return
+  }
 
   if (!fs.existsSync(filePath)) {
     res.status(404).json({ message: "File not found" });
@@ -45,8 +54,17 @@ router.get("/download/:filename", authenticate, (req: Request, res: Response) =>
 });
 
 router.delete("/files/:filename", authenticate, (req: Request, res: Response) => {
-  const file = req.params.filename;
-  const filePath = path.join(__dirname, "../uploads", file);
+  let file = req.params.filename;
+
+  file = sanitizeFilename(file);
+
+  const uploadsDir = path.resolve(__dirname, "../uploads");
+  const filePath = path.join(uploadsDir, file);
+
+  if (!filePath.startsWith(uploadsDir)) {
+    res.status(400).json({ message: "Invalid file path" });
+    return
+  }
 
   if (!fs.existsSync(filePath)) {
     res.status(404).json({ message: "File not found" });
