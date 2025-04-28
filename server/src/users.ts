@@ -8,6 +8,7 @@ const users: { email: string; passwordHash: string }[] = [];
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
+// Registration route: validates inputs and securely hashes passwords
 router.post(
   "/register",
   [
@@ -26,11 +27,13 @@ router.post(
 
     const { email, password } = req.body;
 
+    // Prevent duplicate account registration
     const existingUser = users.find(user => user.email === email);
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    // Securely hash password before storing
     const passwordHash = await bcrypt.hash(password, 10);
     users.push({ email, passwordHash });
 
@@ -38,6 +41,7 @@ router.post(
   }
 );
 
+// Login route: validates credentials and issues signed JWT
 router.post(
   "/login",
   [
@@ -70,9 +74,10 @@ router.post(
       expiresIn: "1d",
     });
 
+    // Set HttpOnly cookie to securely store JWT
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
+      secure: true, // Only over HTTPS in production
       sameSite: "strict",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
@@ -81,17 +86,18 @@ router.post(
   }
 );
 
-// GET or POST /api/logout
+// Logout route: clears authentication cookie
 router.post("/logout", (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true, // must match your login cookie settings
+    secure: true,
     sameSite: "strict",
   });
 
   res.json({ message: "Logged out successfully" });
 });
 
+// Authenticated route: verifies JWT and returns user data
 router.get("/me", (req: Request, res: Response): void => {
   const token = req.cookies.token;
 

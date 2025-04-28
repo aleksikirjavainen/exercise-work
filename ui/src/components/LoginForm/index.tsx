@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Handles user login: securely sends credentials and manages authentication flow
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +16,7 @@ const LoginForm = () => {
       const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include", // Include HttpOnly cookies for secure session management
         body: JSON.stringify({ email, password }),
       });
 
@@ -24,7 +25,7 @@ const LoginForm = () => {
       if (!response.ok) {
         setError(data.message || "Login failed");
       } else {
-        navigate("/dashboard");
+        navigate("/dashboard"); // Redirect after successful authentication
       }
     } catch (err) {
       setError("Server error");
@@ -47,9 +48,7 @@ const LoginForm = () => {
         required
         onChange={(e) => setPassword(e.target.value)}
       />
-
       {error && <p className="error-message">{error}</p>}
-
       <button type="submit">Login</button>
     </form>
   );

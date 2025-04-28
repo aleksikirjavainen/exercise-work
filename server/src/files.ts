@@ -5,6 +5,7 @@ import { authenticate, sanitizeFilename } from "./functions";
 
 const router = express.Router();
 
+// Authenticated route: List only the logged-in user's own files
 router.get("/files", authenticate, (req: Request, res: Response) => {
   const uploadsPath = path.join(__dirname, "../uploads");
 
@@ -14,7 +15,8 @@ router.get("/files", authenticate, (req: Request, res: Response) => {
     const userEmail = (req as any).user.email;
     const userPrefix = userEmail.replace(/[@.]/g, "-");
 
-    const userFiles = fileNames.filter(name => name.startsWith(userPrefix));
+    // Securely list only files that start with user's own prefix
+    const userFiles = fileNames.filter(name => name.startsWith(userPrefix + "-"));
 
     const fileData = userFiles.map(filename => {
       const fullPath = path.join(uploadsPath, filename);
@@ -32,6 +34,7 @@ router.get("/files", authenticate, (req: Request, res: Response) => {
   });
 });
 
+// Secure download: validate filename to prevent path traversal attacks
 router.get("/download/:filename", authenticate, (req: Request, res: Response) => {
   let file = req.params.filename;
 
@@ -40,6 +43,7 @@ router.get("/download/:filename", authenticate, (req: Request, res: Response) =>
   const uploadsDir = path.resolve(__dirname, "../uploads");
   const filePath = path.join(uploadsDir, file);
 
+  // Confirm the resolved path stays inside uploads directory
   if (!filePath.startsWith(uploadsDir)) {
     res.status(400).json({ message: "Invalid file path" });
     return
@@ -53,6 +57,7 @@ router.get("/download/:filename", authenticate, (req: Request, res: Response) =>
   res.download(filePath);
 });
 
+// Secure delete: validate filename and ownership before deleting
 router.delete("/files/:filename", authenticate, (req: Request, res: Response) => {
   let file = req.params.filename;
 
@@ -61,6 +66,7 @@ router.delete("/files/:filename", authenticate, (req: Request, res: Response) =>
   const uploadsDir = path.resolve(__dirname, "../uploads");
   const filePath = path.join(uploadsDir, file);
 
+  // Confirm the resolved path stays inside uploads directory
   if (!filePath.startsWith(uploadsDir)) {
     res.status(400).json({ message: "Invalid file path" });
     return
@@ -74,7 +80,5 @@ router.delete("/files/:filename", authenticate, (req: Request, res: Response) =>
   fs.unlinkSync(filePath);
   res.json({ message: "File deleted successfully" });
 });
-
-
 
 export default router;

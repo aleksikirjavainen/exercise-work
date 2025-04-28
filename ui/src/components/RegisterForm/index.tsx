@@ -1,18 +1,19 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
+// Handles user registration: validates password match before sending to server
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [retypePassword, setRetypePassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
 
+    // Client-side password confirmation check
     if (password !== retypePassword) {
       setError("Passwords do not match");
       return;
@@ -39,13 +40,29 @@ const RegisterForm = () => {
 
   return (
     <form onSubmit={handleRegister} className="auth-form">
-      <input type="email" placeholder="Email" value={email} required onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} required onChange={(e) => setPassword(e.target.value)} />
-      <input type="password" placeholder="Retype Password" value={retypePassword} required onChange={(e) => setRetypePassword(e.target.value)} />
-
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        required
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        required
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Retype Password"
+        value={retypePassword}
+        required
+        onChange={(e) => setRetypePassword(e.target.value)}
+      />
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
-
       <button type="submit">Register</button>
     </form>
   );
